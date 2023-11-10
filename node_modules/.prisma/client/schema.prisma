@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider               = "sqlite"
+  url                    = env("DATABASE_URL")
+  // shadowDatabaseUrl      = env("SHADOW_DATABASE_URL")
+}
+
+model User {
+  id                  Int              @id @default(autoincrement())
+  name                String
+  email               String           @unique
+  password            String
+  userType            String
+  status              String
+  matriculation       String?          // a ? é para permitir que o campo fique vazio ao criar o usuário, no caso para o admin
+  class               String?          // a ? é para permitir que o campo fique vazio ao criar o usuário, no caso para o admin
+  telephone           String
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  passwordResetToken  String           @default("a")
+  passwordResetAt     DateTime         @updatedAt
+
+  @@map("users")
+}
+
+model Activity {
+  id                Int              @id @default(autoincrement())
+  idStudent         Int              @unique
+  name              String
+  activityGroup     String
+  activityType      String
+  workload          Int
+  activityPeriod    String
+  placeOfCourse     String
+  certificate       String
+
+  @@map("activities")
+}
+
+model GroupOfActivity {
+  id                Int              @id @default(autoincrement())
+  name              String
+  status            String
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@map("groupsOfActivities")
+}
+
+model typeOfActivity {
+  id                Int              @id @default(autoincrement())
+  description       String
+  activityGroup     String
+  courseWorkload    Int
+  semesterWorkload  Int
+  status            String
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@map("typesOfActivities")
+}
