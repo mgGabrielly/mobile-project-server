@@ -1,20 +1,28 @@
-# Use an official Node.js runtime as a parent image
+# Use a imagem oficial do Node.js como base
 FROM node:18
 
-# Set the working directory in the container
-WORKDIR /app
+# Defina o diretório de trabalho dentro do contêiner
+WORKDIR /usr/appBackend
 
-# Copy package.json and package-lock.json to the container
+# Copie os arquivos necessários para o contêiner (package.json e package-lock.json)
 COPY package*.json ./
+COPY prisma ./prisma/
+COPY tsconfig.json ./
 
-# Install app dependencies
+# Instale as dependências do projeto
 RUN npm install
 
-# Bundle app source
+# Instale a CLI dotenv globalmente
+RUN npm install -g dotenv-cli
+
+# Copie todos os arquivos do diretório atual para o diretório de trabalho do contêiner
 COPY . .
 
-# Expose the port on which the app will run
+# Execute as migrações do Prisma e gere os artefatos necessários
+RUN npx prisma migrate dev && npx prisma generate
+
+# Exponha a porta que a aplicação estará ouvindo
 EXPOSE 8080
 
-# Define the command to run your application
-CMD ["node", "server.js"]
+# Comando para executar a aplicação quando o contêiner for iniciado
+CMD ["npm", "run", "dev"]
