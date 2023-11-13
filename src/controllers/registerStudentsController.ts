@@ -1,6 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 import { Request, Response, NextFunction } from 'express';
 import readStudents from '../components/readDataStudents';
+import extractClass from "../components/extractClass";
+import extractUserType from "../components/extractUserType";
+import generatePassword from "../components/generatePassword";
 
 const prisma = new PrismaClient();
 
@@ -23,26 +26,33 @@ class AddStudentsController {
           try {
             const studentExists = await prisma.user.findUnique({
               where: {
-                id: allStudent.id,
+                email: allStudent.email,
               },
             });
             if (studentExists) {
               continue;
             } else {
+              // Extraindo a turma pela matricula
+              const turma = extractClass(allStudent.matriculation);
+
+              // Extraindo o tipo de usuario pelo email
+              const type = extractUserType(allStudent.email);
+
+              // Criar senha aleatoria
+              const hashpassword = generatePassword();
               const student = await prisma.user.create({
                 data: {
-                  id: allStudent.id,
                   name: allStudent.name,
-                  client: allStudent.client,
-                  market: allStudent.market,
-                  box_type: allStudent.box_type,
-                  mold_family: allStudent.mold_family,
-                  lid_type: allStudent.lid_type,
-                  box_id: allStudent.box_id,
-                  box_quantity: allStudent.box_quantity,
-                  lid_id: allStudent.lid_id,
+                  email: allStudent.email,
+                  telephone: allStudent.telephone,
+                  matriculation: allStudent.matriculation,
+                  status: "ativo",
+                  password: String(hashpassword),
+                  class: turma,
+                  userType: type,
                 },
               });
+              continue;
             }
           } catch (studentError) {
             return res.status(500).json({
@@ -53,11 +63,11 @@ class AddStudentsController {
         }
 
         return res.status(200).json({
-          message: 'Orders created successfully',
+          message: 'Users Students created successfully',
         });
       } catch (processingError) {
         return res.status(500).json({
-          message: 'An error occurred while processing orders',
+          message: 'An error occurred while processing students',
           error: processingError,
         });
       }
@@ -65,4 +75,4 @@ class AddStudentsController {
   }
 }
 
-export default AddStudentsController;
+export default new AddStudentsController();

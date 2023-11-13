@@ -34,7 +34,7 @@ export class ForgotPasswordController {
               });
               
               let message = await transport.sendMail({
-                from: '"MPS - Support" <mps.redefine@gmail.com>',    
+                from: '"Atividades Complementares - Support" <atividades.comp.suporte@gmail.com>',    
                 to: user.email, 
                 subject: 'Redefinir senha - Atividades Complementares',
                 text: 'Redefinição de sua senha',

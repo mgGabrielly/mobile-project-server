@@ -2,6 +2,7 @@ import express from 'express';
 import helmet from 'helmet';
 import userRoutes from './routes/user.routes';
 import resetPasswordRoutes from './routes/resetPassword.routes';
+import userRegisterStudents from './routes/registerStudents.routes';
 // import swaggerUi from 'swagger-ui-express';
 // import swaggerDocs from './swagger.json';
 
@@ -23,6 +24,7 @@ app.use(helmet());
 // Routes
 app.use(userRoutes);
 app.use(resetPasswordRoutes);
+app.use(userRegisterStudents);
 
 app.get('/', (req, res) => {
     res.send('Hello guys!');
