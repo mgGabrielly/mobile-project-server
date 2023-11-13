@@ -12,7 +12,6 @@
       "resolveJsonModule": true,
       "isolatedModules": true,
       "types": ["@prisma/client"]
-    //   "jsx": "react"
     },
     "include": ["src/**/*.ts"],
     "exclude": ["node_modules"]

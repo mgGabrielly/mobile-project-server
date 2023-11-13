@@ -18,7 +18,7 @@ model User {
   password            String
   userType            String
   status              String
-  matriculation       String?          // a ? é para permitir que o campo fique vazio ao criar o usuário, no caso para o admin
+  matriculation       String         
   class               String?          // a ? é para permitir que o campo fique vazio ao criar o usuário, no caso para o admin
   telephone           String
   createdAt           DateTime         @default(now())
