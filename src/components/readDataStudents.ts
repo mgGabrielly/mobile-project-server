@@ -12,20 +12,16 @@ const readDataStudents = function (sheet: string): any[] {
     for (let i = 1; i < data.length; i++) {
         const element: any = data[i];
         const dataStudents = {
-            id: element.__EMPTY,
-            name: element.__EMPTY_1,
-            client: element.__EMPTY_2,
-            market: element.__EMPTY_3,
-            box_type: element.__EMPTY_4,
-            mold_family: element.__EMPTY_5,
-            lid_type: element.__EMPTY_6,
-            box_id: element.__EMPTY_7,
-            box_quantity: element.__EMPTY_8,
-            lid_id: element.__EMPTY_9,
+            name: element.__EMPTY,
+            email: element.__EMPTY_1,
+            telephone: element.__EMPTY_2,
+            matriculation: element.__EMPTY_3,
         };
         finalArr.push(dataStudents);
-    }
+    } 
+    console.log(finalArr);
     return finalArr;
+    
 };
 
 export default readDataStudents;
