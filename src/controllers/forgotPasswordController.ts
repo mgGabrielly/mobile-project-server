@@ -1,62 +1,65 @@
 import { PrismaClient } from "@prisma/client";
-import crypto from 'crypto';
-import nodemailer from 'nodemailer';
 import { Request, Response, NextFunction } from 'express';
 
 const prisma = new PrismaClient();
+const crypto = require('crypto');
+const nodeMailer = require('nodemailer');
 
-class ForgotPasswordController {
-  async forgotPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
-    const { email } = req.body;
-    try {
-      const user = await prisma.user.findUnique({ where: { email } });
-      if (!user) {
-        return res.status(400).send({ error: 'Invalid email!' });
-      } else {
-        // Saving the token in the bank for comparison
-        const token = crypto.randomBytes(10).toString('hex');
+export class ForgotPasswordController {
+  async forgotPassword (req: Request, res: Response, next: NextFunction) {
+      const {email} = req.body
+      try {
+          const user = await prisma.user.findUnique({ where: {email} })
+          if(!user){
+            res.status(400).send({ erro: 'Invalid email!'})
+          } else {
+            // Saving the token in the bank for comparison
+            const token = crypto.randomBytes(10).toString('hex')
 
-        await prisma.user.update({
-          where: { email },
-          data: {
-            passwordResetToken: token,
-            passwordResetAt: new Date(Date.now() + 15 * 60000),
-          },
-        });
-        // Sending an email for password reset
-        try {
-          let transport = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-              user: 'mps.redefine@gmail.com',
-              pass: 'fhjmqqgwwpzegpoi',
-            },
-          });
+            await prisma.user.update({
+              where: {email},
+                data: {
+                  passwordResetToken: token,
+                  passwordResetAt: new Date(Date.now() + 15 * 60000)
+                }
+            })
+            // Sending email for password reset
+            try {
+              let transport = nodeMailer.createTransport({
+                service: 'gmail',
+                auth: {
+                  user: process.env.GMAIL_USER,
+                  pass: process.env.GMAIL_PASS
+                }
+              });
+              
+              let message = await transport.sendMail({
+                from: '"MPS - Support" <mps.redefine@gmail.com>',    
+                to: user.email, 
+                subject: 'Redefinir senha - Atividades Complementares',
+                text: 'Redefinição de sua senha',
+                html:
+                  `<h1>Recuperação de Senha</h1> <p>Prezado(a) ${user.name}! </br> Esse e-mail é enviado automaticamente, por favor não responda.</p> <P>Esqueceu a senha? Utilize esse<b> 👉 Token: ${ token } 👈 <b> </P> <h2>Dicas</h2> <p> - O token tem um prazo de quinze (15) minutos para ser ultilizado. Sendo ultrapassado, será necessário fazer uma nova solicitação 🕑</p> <p> - Para alterar a senha insira o token recebido no campo código no formulário 📜</p><p> - Sua senha é pessoal e não pode ser compartilhada 🤫</p></b> <b><h4>Atenciosamente</h4> <h4>Equipe de suporte 💻</h4><b>`,
+                      
+              });
+              res.status(200).json({
+                  message: 'Email send to sucess!'
+              });
 
-          let message = await transport.sendMail({
-            from: '"MPS - Support" <mps.redefine@gmail.com>',
-            to: user.email,
-            subject: 'Reset Password - MPS System',
-            text: 'Click the button to reset your password',
-            html: `<h1>Password Recovery</h1> <p>Dear ${user.name}! </br> This email is sent automatically, please do not reply.</p> <p>Forgot your password? Use this<b> 👉 Token: ${token} 👈 <b> </p> <h2>Tips</h2> <p> - The token has a fifteen (15) minutes deadline to be used. If exceeded, a new request will be necessary 🕑</p> <p> - To change your password, enter the received token in the code field in the form 📜</p><p> - Your password is personal and cannot be shared 🤫</p></b> <b><h4>Kind regards</h4> <h4>Support Team 💻</h4><b>`,
+            } catch (error) {
+              res.status(500).json({
+                message: 'Error to send email!',
+                error: error
+              });
+            }
+          }
+      } catch (error) {
+          res.status(405).json({
+              message: 'Erro, try again!',
+              error: error
           });
-          res.status(200).json({
-            message: 'Email sent successfully!',
-          });
-        } catch (error) {
-          res.status(500).json({
-            message: 'Error sending email!',
-            error: error,
-          });
-        }
       }
-    } catch (error) {
-      res.status(405).json({
-        message: 'Error, please try again!',
-        error: error,
-      });
-    }
+
   }
 }
-
 export default new ForgotPasswordController();

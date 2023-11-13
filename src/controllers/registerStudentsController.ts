@@ -5,7 +5,7 @@ import readStudents from '../components/readDataStudents';
 const prisma = new PrismaClient();
 
 class AddStudentsController {
-  async addDatasStudents(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async addDatasStudents(req: Request, res: Response, next: NextFunction) {
     const file = req.file;
 
     if (
