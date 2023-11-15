@@ -9,17 +9,17 @@ const readDataStudents = function (sheet: string): any[] {
 
     const data = reader.utils.sheet_to_json(file.Sheets[sheets[0]]);
 
-    for (let i = 1; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
         const element: any = data[i];
         const dataStudents = {
-            name: element.__EMPTY,
-            email: element.__EMPTY_1,
-            telephone: element.__EMPTY_2,
-            matriculation: element.__EMPTY_3,
+            name: element.nome,
+            email: element.email,
+            telephone: String(element.telefone),
+            matriculation: element.matricula,
         };
         finalArr.push(dataStudents);
     } 
-    console.log(finalArr);
+    // console.log(finalArr);
     return finalArr;
     
 };
