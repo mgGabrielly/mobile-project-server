@@ -29,7 +29,16 @@ class GroupOfActivityController {
 
     async getAllGroupOfActivity(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const groups = await prisma.groupOfActivity.findMany();
+            const groups = await prisma.groupOfActivity.findMany( {
+                where: { status: 'ativo'},
+                include: {
+                    activityTypes: {
+                        where: {
+                            status: 'ativo',
+                        },
+                    }, 
+                }, 
+            });
             res.json({ groups });
         } catch (error) {
             res.status(500).json({ error: "Ocorreu um erro ao buscar os grupos de atividades." });
@@ -41,6 +50,7 @@ class GroupOfActivityController {
             const { id } = req.params;
             const group = await prisma.groupOfActivity.findUnique({
                 where: { id: Number(id) },
+                include: {activityTypes: true },
             });
             if (!group) {
                 res.status(404).json({ error: "Grupo de atividade não encontrado." });
@@ -84,8 +94,11 @@ class GroupOfActivityController {
             if (!group) {
                 res.status(404).json({ error: "Grupo de atividade não encontrado." });
             } else {
-                await prisma.groupOfActivity.delete({
+                await prisma.groupOfActivity.update({
                     where: { id: Number(id) },
+                    data: {
+                        status: "desativado"
+                    },
                 });
                 res.json({ message: "Grupo de atividade excluído com sucesso." });
             }
