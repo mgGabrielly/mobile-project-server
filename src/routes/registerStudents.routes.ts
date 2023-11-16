@@ -27,8 +27,8 @@ const upload = multer({
   storage: storage,
 });
 
-const RegisterStudentsRoutes: Router = express.Router();
+const registerStudentsRoutes: Router = express.Router();
 
-RegisterStudentsRoutes.post("/register-students", upload.single("file"), AddStudentsController.addDatasStudents);
+registerStudentsRoutes.post("/register-students", upload.single("file"), AddStudentsController.addDatasStudents);
 
-export default RegisterStudentsRoutes;
+export default registerStudentsRoutes;
