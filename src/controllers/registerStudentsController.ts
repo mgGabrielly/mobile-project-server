@@ -53,12 +53,12 @@ class AddStudentsController {
         }
       
         return res.status(200).json({
-          message: 'Users Students created successfully',
+          message: 'Usuários cadastrados com sucesso',
         });
       } catch (error) {
-        console.error('An error occurred while processing students:', error);
+        console.error('Ocorreu um erro ao processar os usuários', error);
         return res.status(500).json({
-          message: 'An error occurred while processing students',
+          message: 'Ocorreu um erro ao processar os usuários',
           error: error,
         });
       }
