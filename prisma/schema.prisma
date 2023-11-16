@@ -50,18 +50,22 @@ model GroupOfActivity {
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
 
+  activityTypes typeOfActivity[]
+
   @@map("groupsOfActivities")
 }
 
 model typeOfActivity {
   id                Int              @id @default(autoincrement())
-  description       String
+  description       String           @unique
   activityGroup     String
   courseWorkload    Int
   semesterWorkload  Int
   status            String
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
+  
+  activityGroupReference GroupOfActivity @relation(fields: [activityGroup], references: [name])
 
   @@map("typesOfActivities")
 }

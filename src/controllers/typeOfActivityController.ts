@@ -6,91 +6,100 @@ const prisma = new PrismaClient();
 class TypeOfActivityController {
     async createTypeOfActivity(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { name } = req.body;
-            const groupExist = await prisma.groupOfActivity.findUnique({ where: { name } });
+            const { description, activityGroup, courseWorkload, semesterWorkload } = req.body;
+            const typeExist = await prisma.typeOfActivity.findUnique({ where: { description } });
 
-            if (groupExist) {
+            if (typeExist) {
                 res.status(405).json({
-                    message: "Grupo de atividade já existe",
+                    message: "Tipo de atividade já existe",
                 });
             }
 
-            const group = await prisma.groupOfActivity.create({
+            const type = await prisma.typeOfActivity.create({
                 data: {
-                    name, 
+                    description, 
+                    activityGroup,
+                    courseWorkload,
+                    semesterWorkload,
                     status: "ativo"
                 },
             });
-            res.json(group)
+            res.json(type)
         } catch (error) {
-            res.status(500).json({ error: "Não foi possível criar o gruo de atividade." });
+            res.status(500).json({ error: "Não foi possível criar o tipo de atividade." });
         }
     }
 
     async getAllTypeOfActivity(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const groups = await prisma.groupOfActivity.findMany();
-            res.json({ groups });
+            const types = await prisma.typeOfActivity.findMany( {where: { status: 'ativo'}} );
+            res.json({ types });
         } catch (error) {
-            res.status(500).json({ error: "Ocorreu um erro ao buscar os grupos de atividades." });
+            res.status(500).json({ error: "Ocorreu um erro ao buscar os tipos de atividades." });
         }
     }
 
     async getTypeOfActivityById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { id } = req.params;
-            const group = await prisma.groupOfActivity.findUnique({
+            const type = await prisma.typeOfActivity.findUnique({
                 where: { id: Number(id) },
             });
-            if (!group) {
-                res.status(404).json({ error: "Grupo de atividade não encontrado." });
+            if (!type) {
+                res.status(404).json({ error: "Tipo de atividade não encontrado." });
             } else {
-                res.json({ group });
+                res.json({ type });
             }
         } catch (error) {
-            res.status(500).json({ error: "Ocorreu um erro ao buscar o grupo de atividade por ID." });
+            res.status(500).json({ error: "Ocorreu um erro ao buscar o tipo de atividade por ID." });
         }
     }
 
     async updateTypeOfActivity(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { id } = req.params;
-            const { name } = req.body;
-            const group = await prisma.groupOfActivity.findUnique({
+            const { description, activityGroup, courseWorkload, semesterWorkload } = req.body;
+            const type = await prisma.typeOfActivity.findUnique({
                 where: { id: Number(id) },
             });
-            if (!group) {
-                res.status(404).json({ error: "Grupo de atividade não encontrado." });
+            if (!type) {
+                res.status(404).json({ error: "Tipo de atividade não encontrado." });
             } else {
-                const groupUpdate = await prisma.groupOfActivity.update({
+                const typeUpdate = await prisma.typeOfActivity.update({
                     where: { id: Number(id) },
                     data: {
-                        name
+                        description, 
+                        activityGroup, 
+                        courseWorkload, 
+                        semesterWorkload
                     },
                 });
-                res.json({ groupUpdate });
+                res.json({ typeUpdate });
             }
         } catch (error) {
-            res.status(500).json({ error: "Não foi possível atualizar o grupo de atividade." });
+            res.status(500).json({ error: "Não foi possível atualizar o tipo de atividade." });
         }
     }
 
     async deleteTypeOfActivity(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { id } = req.params;
-            const group = await prisma.groupOfActivity.findUnique({
+            const type = await prisma.typeOfActivity.findUnique({
                 where: { id: Number(id) },
             });
-            if (!group) {
-                res.status(404).json({ error: "Grupo de atividade não encontrado." });
+            if (!type) {
+                res.status(404).json({ error: "Tipo de atividade não encontrado." });
             } else {
-                await prisma.groupOfActivity.delete({
+                await prisma.typeOfActivity.update({
                     where: { id: Number(id) },
+                    data: {
+                        status: "desativado"
+                    },
                 });
-                res.json({ message: "Grupo de atividade excluído com sucesso." });
+                res.json({ message: "Tipo de atividade excluído com sucesso." });
             }
         } catch (error) {
-            res.status(500).json({ error: "Ocorreu um erro ao excluir o grupo de atividade." });
+            res.status(500).json({ error: "Ocorreu um erro ao excluir o tipo de atividade." });
         }
     }
 }
