@@ -1,7 +1,10 @@
 import express, { Router } from 'express';
 import UserController from '../controllers/userController';
+// import verifyJWT from '../middlewares/verifyToken';
 
 const userRoutes: Router = express.Router();
+
+// userRoutes.get("/users", verifyJWT.verifyTokenUserCommon, UserController.getAllUsers);
 
 userRoutes.get("/users", UserController.getAllUsers);
 userRoutes.post('/create-user', UserController.createUser);

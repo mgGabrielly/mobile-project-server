@@ -31,7 +31,7 @@ model User {
 
 model Activity {
   id                Int              @id @default(autoincrement())
-  idStudent         Int              @unique
+  idStudent         Int              
   name              String
   activityGroup     String
   activityType      String
@@ -45,7 +45,7 @@ model Activity {
 
 model GroupOfActivity {
   id                Int              @id @default(autoincrement())
-  name              String
+  name              String           @unique
   status            String
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt

@@ -2,7 +2,10 @@ import express from 'express';
 import helmet from 'helmet';
 import userRoutes from './routes/user.routes';
 import resetPasswordRoutes from './routes/resetPassword.routes';
-import userRegisterStudents from './routes/registerStudents.routes';
+import RegisterStudentsRoutes from './routes/registerStudents.routes';
+import authRoutes from './routes/auth.routes';
+import GroupOfActivityRoutes from './routes/groupOfActivity.routes';
+import typeOfActivityRoutes from './routes/typeOfActivity.routes';
 // import swaggerUi from 'swagger-ui-express';
 // import swaggerDocs from './swagger.json';
 
@@ -24,7 +27,10 @@ app.use(helmet());
 // Routes
 app.use(userRoutes);
 app.use(resetPasswordRoutes);
-app.use(userRegisterStudents);
+app.use(RegisterStudentsRoutes);
+app.use(authRoutes);
+app.use(GroupOfActivityRoutes);
+app.use(typeOfActivityRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello guys!');
