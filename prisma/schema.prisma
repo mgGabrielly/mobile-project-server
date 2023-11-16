@@ -39,6 +39,9 @@ model Activity {
   activityPeriod    String
   placeOfCourse     String
   certificate       String
+  evaluation        String
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
 
   @@map("activities")
 }
