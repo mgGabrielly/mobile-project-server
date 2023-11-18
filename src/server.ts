@@ -1,5 +1,6 @@
 import express from 'express';
 import helmet from 'helmet';
+import cors from 'cors';
 import userRoutes from './routes/user.routes';
 import resetPasswordRoutes from './routes/resetPassword.routes';
 import registerStudentsRoutes from './routes/registerStudents.routes';
@@ -21,6 +22,8 @@ app.use(
 
 // Use Helmet para configurar cabeçalhos de segurança
 app.use(helmet());
+// Permitir todas as origens (somente para desenvolvimento)
+app.use(cors());
 
 // // Swagger
 // app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
@@ -45,7 +48,7 @@ app.use((req, res) => {
     res.status(200).send({
       message: "Connected"
     });
-  });
+});
 
 // Listen to the App
 const PORT = process.env.PORT || 3000;

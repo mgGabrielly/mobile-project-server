@@ -52,7 +52,7 @@ class AuthController {
                     }
                 );
                 return res.status(200).json({
-                    token,
+                    token,user,
                 });
             } else if (user.userType === "admin") {
                 const token = jwt.sign(
@@ -68,7 +68,7 @@ class AuthController {
                     }
                 );
                 return res.status(200).json({
-                    token,
+                    token,user,
                 });
             } else {
                 console.log();
