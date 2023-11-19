@@ -1,11 +1,14 @@
 import { PrismaClient } from '@prisma/client';
 import { Request, Response, NextFunction } from 'express';
-import readStudents from '../components/readDataStudents';
+import readDataStudents from '../components/readDataStudents';
+import extractClass from "../components/extractClass";
+import extractUserType from "../components/extractUserType";
+import generatePassword from "../components/generatePassword";
 
 const prisma = new PrismaClient();
 
 class AddStudentsController {
-  async addDatasStudents(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async addDatasStudents(req: Request, res: Response, next: NextFunction) {
     const file = req.file;
 
     if (
@@ -18,51 +21,50 @@ class AddStudentsController {
       });
     } else {
       try {
-        const allStudents = readStudents(file.path);
+        const allStudents = readDataStudents(file.path);
+      
         for (const allStudent of allStudents) {
-          try {
-            const studentExists = await prisma.user.findUnique({
-              where: {
-                id: allStudent.id,
+          const studentExists = await prisma.user.findUnique({
+            where: {
+              email: allStudent.email,
+            },
+          });
+      
+          if (!studentExists) {
+            const turma = extractClass(allStudent.matriculation);
+            const type = extractUserType(allStudent.email);
+            const hashpassword = generatePassword();
+            
+            await prisma.user.create({
+              data: {
+                name: allStudent.name || '',
+                email: allStudent.email || '',
+                telephone: allStudent.telephone || '',
+                matriculation: String(allStudent.matriculation) || '',
+                status: 'ativo',
+                password: String(hashpassword),
+                class: turma,
+                userType: type,
               },
             });
-            if (studentExists) {
-              continue;
-            } else {
-              const student = await prisma.user.create({
-                data: {
-                  id: allStudent.id,
-                  name: allStudent.name,
-                  client: allStudent.client,
-                  market: allStudent.market,
-                  box_type: allStudent.box_type,
-                  mold_family: allStudent.mold_family,
-                  lid_type: allStudent.lid_type,
-                  box_id: allStudent.box_id,
-                  box_quantity: allStudent.box_quantity,
-                  lid_id: allStudent.lid_id,
-                },
-              });
-            }
-          } catch (studentError) {
-            return res.status(500).json({
-              message: 'An error occurred while working with orders in the database',
-              error: studentError,
-            });
+          } else {
+            continue;
           }
         }
-
+      
         return res.status(200).json({
-          message: 'Orders created successfully',
+          message: 'Usuários cadastrados com sucesso',
         });
-      } catch (processingError) {
+      } catch (error) {
+        console.error('Ocorreu um erro ao processar os usuários', error);
         return res.status(500).json({
-          message: 'An error occurred while processing orders',
-          error: processingError,
+          message: 'Ocorreu um erro ao processar os usuários',
+          error: error,
         });
       }
+      
     }
   }
 }
 
-export default AddStudentsController;
+export default new AddStudentsController();

@@ -18,7 +18,7 @@ model User {
   password            String
   userType            String
   status              String
-  matriculation       String?          // a ? é para permitir que o campo fique vazio ao criar o usuário, no caso para o admin
+  matriculation       String         
   class               String?          // a ? é para permitir que o campo fique vazio ao criar o usuário, no caso para o admin
   telephone           String
   createdAt           DateTime         @default(now())
@@ -26,12 +26,14 @@ model User {
   passwordResetToken  String           @default("a")
   passwordResetAt     DateTime         @updatedAt
 
+  myActivities Activity[]
+
   @@map("users")
 }
 
 model Activity {
   id                Int              @id @default(autoincrement())
-  idStudent         Int              @unique
+  idStudent         Int              
   name              String
   activityGroup     String
   activityType      String
@@ -39,29 +41,38 @@ model Activity {
   activityPeriod    String
   placeOfCourse     String
   certificate       String
+  evaluation        String
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  activityUserReference User @relation(fields: [idStudent], references: [id])
 
   @@map("activities")
 }
 
 model GroupOfActivity {
   id                Int              @id @default(autoincrement())
-  name              String
+  name              String           @unique
   status            String
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
+
+  activityTypes typeOfActivity[]
 
   @@map("groupsOfActivities")
 }
 
 model typeOfActivity {
   id                Int              @id @default(autoincrement())
-  description       String
+  description       String           @unique
   activityGroup     String
   courseWorkload    Int
   semesterWorkload  Int
   status            String
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
+  
+  activityGroupReference GroupOfActivity @relation(fields: [activityGroup], references: [name])
 
   @@map("typesOfActivities")
 }
