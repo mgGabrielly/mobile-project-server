@@ -26,6 +26,8 @@ model User {
   passwordResetToken  String           @default("a")
   passwordResetAt     DateTime         @updatedAt
 
+  myActivities Activity[]
+
   @@map("users")
 }
 
@@ -42,6 +44,8 @@ model Activity {
   evaluation        String
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
+
+  activityUserReference User @relation(fields: [idStudent], references: [id])
 
   @@map("activities")
 }

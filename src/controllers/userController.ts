@@ -53,7 +53,9 @@ class UserController {
 
   async getAllUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const users = await prisma.user.findMany();
+      const users = await prisma.user.findMany( {
+        include: { myActivities: true },
+      });
       res.json({ users });
     } catch (error) {
       res.status(500).json({ error: "Ocorreu um erro ao buscar os usuários." });
