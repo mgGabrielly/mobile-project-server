@@ -31,9 +31,11 @@ const upload = multer({
 const activityRoutes: Router = express.Router();
 
 activityRoutes.get("/activities", ActivityController.getAllActivity);
-activityRoutes.post('/create-activities', ActivityController.createActivity);
+activityRoutes.post('/create-activities/:id', ActivityController.createActivity);
 activityRoutes.get('/activities/:id', ActivityController.getActivityById);
 activityRoutes.put('/update-activities/:id', ActivityController.updateActivity);
 activityRoutes.delete('/delete-activities/:id', ActivityController.deleteActivity);
+activityRoutes.get('/my-activities/:id', ActivityController.getAllActivityByIdStudent);
+activityRoutes.put('/evaluate-activity/:id', ActivityController.evaluateActivity);
 
 export default activityRoutes;
