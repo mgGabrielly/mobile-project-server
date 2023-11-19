@@ -25,7 +25,7 @@ async function emailEvaluationResult(activityUpdate: { idStudent: any; name: any
             subject: 'Avaliação - Atividades Complementares',
             text: 'Avaliação da atividade',
             html:
-                `<h1>Avaliação da Atividade</h1> <p>Prezado(a) ${student.name}! </br> Esse e-mail é enviado automaticamente, por favor não responda.</p> <P>Sua atividade cadastrada foi avaliada!!!</P> <h2>Informações da atividade:</h2> <p>Atividade: ${activityUpdate.name} </p> <p>Período de realização: ${activityUpdate.activityPeriod} </p> <p>Carga horária: ${activityUpdate.workload} </p> Avaliação: ${activityUpdate.evaluation}</p> <p> - Observações: ${observation ? observation : 'Sem observações'} </p> </br> <p> - Qualquer dúvida, entre em contato com a Coordenação do curso!</p></b> <b><h4>Atenciosamente</h4> <h4>Equipe de suporte 💻</h4><b>`, 
+                `<h1>Avaliação da Atividade</h1> <p>Prezado(a) ${student.name}! </br> Esse e-mail é enviado automaticamente, por favor não responda.</p> <P>Sua atividade cadastrada foi avaliada!!!</P> <h2>Informações da atividade:</h2> <p>Atividade: ${activityUpdate.name} </p> <p>Período de realização: ${activityUpdate.activityPeriod} </p> <p>Carga horária: ${activityUpdate.workload} </p> <p> Avaliação: ${activityUpdate.evaluation}</p> <p> - Observações: ${observation ? observation : 'Sem observações'} </p> </br> <p> - Qualquer dúvida, entre em contato com a Coordenação do curso!</p></b> <b><h4>Atenciosamente</h4> <h4>Equipe de suporte 💻</h4><b>`, 
             });
             return ({
                 message: 'Email enviado com sucesso!'

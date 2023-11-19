@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { PrismaClient } from "@prisma/client";
 import emailEvaluationResult from "../components/emailEvaluationResult";
+import checkActivityExistence from "../components/checkActivityExistence";
 import activityCreateNotificationEmail from "../components/activityCreateNotificationEmail";
 
 const prisma = new PrismaClient();
@@ -16,22 +17,13 @@ class ActivityController {
                 res.status(401).json({ message: 'Nenhum arquivo PDF enviado.' });
             } else {
                 const certificates = file.path;
-                const activityExist = await prisma.activity.findMany({ 
-                    where: { 
-                        name, 
-                        activityGroup, 
-                        activityType, 
-                        workload: Number(workload), 
-                        activityPeriod, 
-                        placeOfCourse 
-                    }, 
-                });
-    
-                if (activityExist.length > 0) {
-                    res.status(405).json({
-                        message: "Atividade já existe",
-                    });
+
+                const activityExists = await checkActivityExistence(name, activityGroup, activityType, Number(workload), activityPeriod, placeOfCourse);
+                if (activityExists) {
+                    res.status(405).json({ message: "Atividade já existe" });
+                    return;
                 }
+
                 const activity = await prisma.activity.create({
                     data: {
                         name, 
@@ -45,7 +37,12 @@ class ActivityController {
                         evaluation: "Em análise"
                     },
                 });
-                res.json(activity)
+                
+                if (activity) {
+                    activityCreateNotificationEmail(activity)
+                    res.json({message: "Atividade cadastrada com sucesso", activity})
+                    return;
+                }
             }
         } catch (error) {
             res.status(500).json({ error: "Não foi possível cadastrar a Atividade." });
@@ -143,7 +140,7 @@ class ActivityController {
                     },
                 });
                 // Envio do email para aletar o aluno da atualização da avalização da atividade
-                emailEvaluationResult(activityUpdate, observation);
+                await emailEvaluationResult(activityUpdate, observation);
                 res.json({activityUpdate})
             }
         } catch (error) {
