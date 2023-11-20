@@ -33,7 +33,7 @@ const activityRoutes: Router = express.Router();
 activityRoutes.get("/activities", ActivityController.getAllActivity);
 activityRoutes.post('/create-activities/:id', upload.single("file"), ActivityController.createActivity);
 activityRoutes.get('/activities/:id', ActivityController.getActivityById);
-activityRoutes.put('/update-activities/:id', ActivityController.updateActivity);
+activityRoutes.put('/update-activities/:id', upload.single("file"), ActivityController.updateActivity);
 activityRoutes.delete('/delete-activities/:id', ActivityController.deleteActivity);
 activityRoutes.get('/my-activities/:id', ActivityController.getAllActivityByIdStudent);
 activityRoutes.put('/evaluate-activity/:id', ActivityController.evaluateActivity);
