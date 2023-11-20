@@ -24,7 +24,6 @@ async function activityCreateNotificationEmail(activity: { id: number; idStudent
         }
         
         for (const admin of admins) {
-            console.log(admin.name)
             try {
                 let transport = nodeMailer.createTransport({
                     service: 'gmail',

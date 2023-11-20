@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { PrismaClient } from "@prisma/client";
 import emailEvaluationResult from "../components/emailEvaluationResult";
 import checkActivityExistence from "../components/checkActivityExistence";
+import validateActivityInformation from "../components/validateActivityInformation";
 import activityCreateNotificationEmail from "../components/activityCreateNotificationEmail";
 
 const prisma = new PrismaClient();
@@ -24,6 +25,12 @@ class ActivityController {
                     return;
                 }
 
+                const validationResult = await validateActivityInformation(id, activityGroup, activityType, workload, activityPeriod);
+                if (validationResult.success == false) {
+                    res.status(validationResult.status).json(validationResult.message);
+                    return;
+                }
+                
                 const activity = await prisma.activity.create({
                     data: {
                         name, 
@@ -37,7 +44,7 @@ class ActivityController {
                         evaluation: "Em análise"
                     },
                 });
-                
+
                 if (activity) {
                     activityCreateNotificationEmail(activity)
                     res.json({message: "Atividade cadastrada com sucesso", activity})
