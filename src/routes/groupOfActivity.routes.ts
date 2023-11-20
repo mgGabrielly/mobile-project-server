@@ -2,12 +2,12 @@ import express, { Router } from 'express';
 import GroupOfActivityController from '../controllers/groupOfActivityController';
 // import verifyJWT from '../middlewares/verifyToken';
 
-const GroupOfActivityRoutes: Router = express.Router();
+const groupOfActivityRoutes: Router = express.Router();
 
-GroupOfActivityRoutes.get("/groupsOfActivities", GroupOfActivityController.getAllGroupOfActivity);
-GroupOfActivityRoutes.post('/create-groupsOfActivities', GroupOfActivityController.createGroupOfActivity);
-GroupOfActivityRoutes.get('/groupsOfActivities/:id', GroupOfActivityController.getGroupOfActivityById);
-GroupOfActivityRoutes.put('/update-groupsOfActivities/:id', GroupOfActivityController.updateGroupOfActivity);
-GroupOfActivityRoutes.delete('/delete-groupsOfActivities/:id', GroupOfActivityController.deleteGroupOfActivity);
+groupOfActivityRoutes.get("/groupsOfActivities", GroupOfActivityController.getAllGroupOfActivity);
+groupOfActivityRoutes.post('/create-groupsOfActivities', GroupOfActivityController.createGroupOfActivity);
+groupOfActivityRoutes.get('/groupsOfActivities/:id', GroupOfActivityController.getGroupOfActivityById);
+groupOfActivityRoutes.put('/update-groupsOfActivities/:id', GroupOfActivityController.updateGroupOfActivity);
+groupOfActivityRoutes.delete('/delete-groupsOfActivities/:id', GroupOfActivityController.deleteGroupOfActivity);
 
-export default GroupOfActivityRoutes;
+export default groupOfActivityRoutes;
