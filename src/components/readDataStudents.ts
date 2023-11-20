@@ -12,10 +12,9 @@ const readDataStudents = function (sheet: string): any[] {
     for (let i = 0; i < data.length; i++) {
         const element: any = data[i];
         const dataStudents = {
-            name: element.nome,
-            email: element.email,
-            telephone: String(element.telefone),
-            matriculation: element.matricula,
+            name: element["Nome Completo"],
+            matriculation: element["Matrícula"],
+            email: element["E-mail institucional"],
         };
         finalArr.push(dataStudents);
     } 

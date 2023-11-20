@@ -38,9 +38,9 @@ class AddStudentsController {
             await prisma.user.create({
               data: {
                 name: allStudent.name || '',
-                email: allStudent.email || '',
-                telephone: allStudent.telephone || '',
                 matriculation: String(allStudent.matriculation) || '',
+                email: allStudent.email || '',
+                telephone: "81989890707",
                 status: 'ativo',
                 password: String(hashpassword),
                 class: turma,
