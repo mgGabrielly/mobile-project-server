@@ -5,9 +5,10 @@ import userRoutes from './routes/user.routes';
 import resetPasswordRoutes from './routes/resetPassword.routes';
 import registerStudentsRoutes from './routes/registerStudents.routes';
 import authRoutes from './routes/auth.routes';
-import GroupOfActivityRoutes from './routes/groupOfActivity.routes';
+import groupOfActivityRoutes from './routes/groupOfActivity.routes';
 import typeOfActivityRoutes from './routes/typeOfActivity.routes';
 import activityRoutes from './routes/activity.routes';
+import dashboardRoutes from './routes/dashboard.routes';
 // import swaggerUi from 'swagger-ui-express';
 // import swaggerDocs from './swagger.json';
 
@@ -33,9 +34,10 @@ app.use(userRoutes);
 app.use(resetPasswordRoutes);
 app.use(registerStudentsRoutes);
 app.use(authRoutes);
-app.use(GroupOfActivityRoutes);
+app.use(groupOfActivityRoutes);
 app.use(typeOfActivityRoutes);
 app.use(activityRoutes);
+app.use(dashboardRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello guys!');
