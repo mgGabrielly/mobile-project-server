@@ -37,5 +37,6 @@ activityRoutes.put('/update-activities/:id', upload.single("file"), ActivityCont
 activityRoutes.delete('/delete-activities/:id', ActivityController.deleteActivity);
 activityRoutes.get('/my-activities/:id', ActivityController.getAllActivityByIdStudent);
 activityRoutes.put('/evaluate-activity/:id', ActivityController.evaluateActivity);
+activityRoutes.get("/activities-analysis", ActivityController.getAllActivityInAnalysis);
 
 export default activityRoutes;
