@@ -5,6 +5,7 @@ import extractClass from "../components/extractClass";
 import extractUserType from "../components/extractUserType";
 import generatePassword from "../components/generatePassword";
 import { hash } from "bcryptjs";
+import validatePassword from "../components/validatePassword";
 
 const prisma = new PrismaClient();
 
@@ -134,17 +135,26 @@ class UserController {
       if (!user) {
         res.status(404).json({ error: "Usuário não encontrado." });
       } else {
-        
-        const email = user.email;
-        const userUpdate = await prisma.user.update({
-          where: { email },
-          data: {
-            name,
-            password: newPassword,
-            telephone
-          },
-        });
-        res.json({ userUpdate });
+
+        if (validatePassword(newPassword)) {
+          if (newPassword != passwordConfirm) {
+            res.status(405).json({ error: "Senhas não coincidem!" });
+          } else {
+            const hashpassword = await hash(newPassword, 8)
+            const email = user.email;
+            const userUpdate = await prisma.user.update({
+              where: { email },
+              data: {
+                name,
+                password: hashpassword,
+                telephone
+              },
+            });
+            res.json({ userUpdate });
+          }
+        } else {
+          res.status(405).send({ erro: 'Senha inválida. Não está no padrão.'})
+        }
       }
     } catch (error) {
       res.status(500).json({ error: "Não foi possível atualizar o usuário." });
