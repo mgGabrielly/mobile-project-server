@@ -1,0 +1,50 @@
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+//// Função para verificar com relação a carga horária total permitida no curso
+async function checkTotalWorkload(id: any ): Promise<{ success: boolean; message: string; status: number }> {
+    // o id é o do estudante
+    try { 
+        // Extraindo as informações do usuário
+        const studentExist = await prisma.user.findUnique({
+            where: { 
+                id: Number(id),
+            },
+        });
+        if(!studentExist || studentExist.status === "desativado") {
+            return { success: false, message: 'Estudante não encontrado.', status: 400 };
+        }
+
+        // Extraindo todas atividades do usuário
+        const activitiesStudent = await prisma.activity.findMany({
+            where: { 
+                idStudent: studentExist.id,
+            },
+        });
+        if(activitiesStudent.length <= 0) {
+            return { success: true, message: 'Atividade pode ser cadastrada.', status: 200 };
+        }
+
+        // Somando todas as horas das atividades já cadastradas para comparar com a carga total permitida no curso
+        let totalWorkloadActivities = 0;
+        for(const activityStudent of activitiesStudent) {
+            totalWorkloadActivities += Number(activityStudent.workload);
+        }
+        
+        if(Number(totalWorkloadActivities) < 120) {
+            return { 
+                success: true, 
+                message: 'Carga total durante o curso não foi atingida. Atividade pode ser cadastrada.', 
+                status: 200 
+            };
+        } else {
+            return { success: false, message: 'Carga horária do curso já foi atingida.', status: 406 };
+        }
+        
+    } catch (error) {
+        return { success: false, message: 'Erro ao validar informações de atividade.', status: 500 };
+    }
+}
+
+export default checkTotalWorkload;

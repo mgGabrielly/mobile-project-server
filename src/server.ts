@@ -9,6 +9,7 @@ import groupOfActivityRoutes from './routes/groupOfActivity.routes';
 import typeOfActivityRoutes from './routes/typeOfActivity.routes';
 import activityRoutes from './routes/activity.routes';
 import dashboardRoutes from './routes/dashboard.routes';
+import downloadDocsRoutes from './routes/downloadDocs.routes';
 // import swaggerUi from 'swagger-ui-express';
 // import swaggerDocs from './swagger.json';
 
@@ -38,6 +39,7 @@ app.use(groupOfActivityRoutes);
 app.use(typeOfActivityRoutes);
 app.use(activityRoutes);
 app.use(dashboardRoutes);
+app.use(downloadDocsRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello guys!');

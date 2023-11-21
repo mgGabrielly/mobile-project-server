@@ -43,10 +43,10 @@ async function validateActivityInformation(id: any, activityGroup: string, activ
         let totalWorkloadOfActivities = 0;
         let totalWorkloadOfActivitiesForTheSemester = 0;
         for(const activityStudent of activitiesStudent) {
-            totalWorkloadOfActivities += activityStudent.workload;
+            totalWorkloadOfActivities += Number(activityStudent.workload);
 
             if(activityStudent.activityPeriod == activityPeriod){
-                totalWorkloadOfActivitiesForTheSemester += activityStudent.workload;
+                totalWorkloadOfActivitiesForTheSemester += Number(activityStudent.workload);
             }
         }
         
@@ -62,9 +62,9 @@ async function validateActivityInformation(id: any, activityGroup: string, activ
                 }; 
             } else {
                 return { 
-                    success: true, 
-                    message: 'Informações da atividade válidas para cadastro. E carga total durante o curso já foi atingida para o tipo de atividade.', 
-                    status: 200 
+                    success: false, 
+                    message: 'Informações da atividade válidas para cadastro. Mas Carga total durante o curso já foi atingida para o tipo de atividade.', 
+                    status: 403 
                 };
             }
         } else {

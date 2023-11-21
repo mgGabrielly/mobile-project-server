@@ -11,14 +11,22 @@ class DataDashboardController {
                 where: { idStudent: Number(id) },
             });
             if (!activities) {
-                // colocar para variavel retornar valor 0
-                res.status(404).json({ error: "Atividades não encontradas." });
+                res.status(403).json({ error: "Atividades não encontradas." });
             } else {
-                // Ver quais os grupos existentes 
-                // Associar horas das atividades por grupo
-                // ter a soma de todas as horas e comparar com as 160 e obter a porcetagem feita até o momento
-                // calcular a porcentagem por grupo de acordo com o total feito até agora
-                res.json({ activities });
+                const hoursPerGroup: Record<string, number> = {};
+                let totalAmountOfHours = 0
+                for (const activity of activities) {
+                    const groupName = activity.activityGroup; 
+                    totalAmountOfHours += Number(activity.workload);
+
+                    if (hoursPerGroup[groupName]) {
+                        hoursPerGroup[groupName] += Number(activity.workload);
+                    } else {
+                        hoursPerGroup[groupName] = Number(activity.workload);
+                    }
+                }
+
+                res.json({ hoursPerGroup, totalAmountOfHours});
             }
         } catch (error) {
             res.status(500).json({ error: "Ocorreu um erro ao gerar dados para o dashboard." });

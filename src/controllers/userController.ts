@@ -123,6 +123,33 @@ class UserController {
       res.status(500).json({ error: "Ocorreu um erro ao excluir o usuário." });
     }
   }
+
+  async updateData(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { name, newPassword, passwordConfirm, telephone } = req.body;
+      const user = await prisma.user.findUnique({
+        where: { id: Number(id) },
+      });
+      if (!user) {
+        res.status(404).json({ error: "Usuário não encontrado." });
+      } else {
+        
+        const email = user.email;
+        const userUpdate = await prisma.user.update({
+          where: { email },
+          data: {
+            name,
+            password: newPassword,
+            telephone
+          },
+        });
+        res.json({ userUpdate });
+      }
+    } catch (error) {
+      res.status(500).json({ error: "Não foi possível atualizar o usuário." });
+    }
+  }
 }
 
 export default new UserController();
