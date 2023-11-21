@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import emailEvaluationResult from "../components/emailEvaluationResult";
 import checkActivityExistence from "../components/checkActivityExistence";
 import validateActivityInformation from "../components/validateActivityInformation";
+import checkTotalWorkload from "../components/checkTotalWorkload";
 import activityCreateNotificationEmail from "../components/activityCreateNotificationEmail";
 import activityUpdateNotificationEmail from "../components/activityUpdateNotificationEmail";
 
@@ -26,6 +27,14 @@ class ActivityController {
                     return;
                 }
 
+                // Validar horas totais
+                const calidationCheckTotalWorkload = await checkTotalWorkload(id);
+                if (calidationCheckTotalWorkload.success == false) {
+                    res.status(calidationCheckTotalWorkload.status).json(calidationCheckTotalWorkload.message);
+                    return;
+                }
+
+                //Validar horas por tipo de atividade
                 const validationResult = await validateActivityInformation(id, activityGroup, activityType, workload, activityPeriod);
                 if (validationResult.success == false) {
                     res.status(validationResult.status).json(validationResult.message);
@@ -188,6 +197,17 @@ class ActivityController {
             }
         } catch (error) {
             res.status(500).json({ error: "Ocorreu um erro ao excluir a atividade." });
+        }
+    }
+
+    async getAllActivityInAnalysis(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const activities = await prisma.activity.findMany({
+                where: { evaluation: "Em análise" },
+            });
+            res.json({ activities });
+        } catch (error) {
+            res.status(500).json({ error: "Ocorreu um erro ao buscar as atividades em análise." });
         }
     }
 }
