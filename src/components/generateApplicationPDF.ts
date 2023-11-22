@@ -1,24 +1,33 @@
-import { PrismaClient } from "@prisma/client";
-import PDFDocument from 'pdfkit';
+import PDFPrinter from 'pdfmake';
+import { TDocumentDefinitions } from "pdfmake/interfaces";
 import fs from 'fs';
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function generateApplicationPDF(id: any) {
-    const student = await prisma.user.findUnique({
-        where: { id: id },
-    });
-    const doc = new PDFDocument();
+    var fonts = {
+        Times: {
+            normal: 'Times-Roman',
+            bold: 'Times-Bold',
+            italics: 'Times-Italic',
+            bolditalics: 'Times-BoldItalic'
+        },
+    };
+    const printer = new PDFPrinter(fonts);
 
-    // Adicione conteúdo ao PDF
-    doc.text('Olá, este é um documento PDF gerado dinamicamente.');
+    const docDefinitions: TDocumentDefinitions = {
+        defaultStyle: {font: "Times"},
+        content: [
+            {text: "relatorio"}
+        ],
+    };
 
-    // Salve o PDF em um arquivo
-    doc.pipe(fs.createWriteStream('output.pdf'));
-
-    // Finalize o documento
-    doc.end();
-    return doc;
+    const pdfDoc = printer.createPdfKitDocument(docDefinitions);
+    pdfDoc.pipe(fs.createWriteStream("relatorio.pdf"));
+    pdfDoc.end();
+    return "foi";
+    // return pdfDoc;
 }
 
 export default generateApplicationPDF;

@@ -17,12 +17,14 @@ class DataDashboardController {
                 let totalAmountOfHours = 0
                 for (const activity of activities) {
                     const groupName = activity.activityGroup; 
-                    totalAmountOfHours += Number(activity.workload);
+                    if(activity.evaluation == "Deferida"){
+                        totalAmountOfHours += Number(activity.workload);
 
-                    if (hoursPerGroup[groupName]) {
-                        hoursPerGroup[groupName] += Number(activity.workload);
-                    } else {
-                        hoursPerGroup[groupName] = Number(activity.workload);
+                        if (hoursPerGroup[groupName]) {
+                            hoursPerGroup[groupName] += Number(activity.workload);
+                        } else {
+                            hoursPerGroup[groupName] = Number(activity.workload);
+                        }
                     }
                 }
 

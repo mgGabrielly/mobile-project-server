@@ -29,7 +29,9 @@ async function checkTotalWorkload(id: any ): Promise<{ success: boolean; message
         // Somando todas as horas das atividades já cadastradas para comparar com a carga total permitida no curso
         let totalWorkloadActivities = 0;
         for(const activityStudent of activitiesStudent) {
-            totalWorkloadActivities += Number(activityStudent.workload);
+            if(activityStudent.evaluation == "Deferida"){
+                totalWorkloadActivities += Number(activityStudent.workload);
+            }
         }
         
         if(Number(totalWorkloadActivities) < 120) {

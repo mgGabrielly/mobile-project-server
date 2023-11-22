@@ -205,7 +205,29 @@ class ActivityController {
             const activities = await prisma.activity.findMany({
                 where: { evaluation: "Em análise" },
             });
-            res.json({ activities });
+    
+            let activitiesAnUser = [];
+    
+            for (const activity of activities) {
+                const user = await prisma.user.findUnique({
+                    where: { id: activity.idStudent },
+                });
+    
+                const combinedObject = {
+                    activityId: activity.id,
+                    activityName: activity.name,
+                    activityGroup: activity.activityGroup,
+                    activityType: activity.activityType,
+                    evaluation: activity.evaluation,
+                    userId: user?.id,
+                    userName: user?.name,
+                    userMatriculation: user?.matriculation,
+                };
+
+                activitiesAnUser.push(combinedObject);
+            }
+    
+            res.json({ activitiesAnUser });
         } catch (error) {
             res.status(500).json({ error: "Ocorreu um erro ao buscar as atividades em análise." });
         }
