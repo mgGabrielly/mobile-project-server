@@ -26,6 +26,7 @@ class DataDashboardController {
                             hoursPerGroup[groupName] = Number(activity.workload);
                         }
                     }
+                    continue;
                 }
 
                 res.json({ hoursPerGroup, totalAmountOfHours});
