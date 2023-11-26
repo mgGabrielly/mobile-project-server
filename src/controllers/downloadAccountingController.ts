@@ -48,8 +48,8 @@ class DownloadAccountingController {
                     defaultStyle: {font: "Times"},
                     content: [
                         { image: 'assets/brasao-doc-contabilizacao.png', fit: [50, 50], alignment: 'center' }, 
-                        { text: '\n MINISTÉRIO DA EDUCAÇÃO \n SECRETARIA DE EDUCAÇÃO PROFISSIONAL E TECNOLÓGICA \n INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DE PERNAMBUCO \n CAMPUS BELO JARDIM \n Coordenação do Curso de Engemnharia de Software', fontSize: 12, bold: true, alignment: 'center', lineHeight: 1.2 },
-                        { text: 'AV. SEBATIÃO RODRIGUES DA COSTA, S/N - SÃO PEDRO - BELO JARDIM/PE - CEP: 55.155-730 \n TEL. (81) 3411 3256 - cces@belojardim.ifpe.edu.br', fontSize: 10, alignment: 'center', lineHeight: 1.2 },
+                        { text: '\n MINISTÉRIO DA EDUCAÇÃO \n SECRETARIA DE EDUCAÇÃO PROFISSIONAL E TECNOLÓGICA \n INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DE PERNAMBUCO \n CAMPUS BELO JARDIM \n Coordenação do Curso de Engenharia de Software', fontSize: 12, bold: true, alignment: 'center', lineHeight: 1.2 },
+                        { text: 'AV. SEBASTIÃO RODRIGUES DA COSTA, S/N - SÃO PEDRO - BELO JARDIM/PE - CEP: 55.155-730 \n TEL. (81) 3411 3256 - cces@belojardim.ifpe.edu.br', fontSize: 10, alignment: 'center', lineHeight: 1.2 },
                         
                         {text: '\n\n\n CONTABILIZAÇÃO DE CARGA HORÁRIA DAS ATIVIDADES COMPLEMENTARES \n\n\n', style: 'header', alignment: 'center', fontSize: 12, bold: true, lineHeight: 1.2},
 

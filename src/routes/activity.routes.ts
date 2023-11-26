@@ -38,5 +38,6 @@ activityRoutes.delete('/delete-activities/:id', ActivityController.deleteActivit
 activityRoutes.get('/my-activities/:id', ActivityController.getAllActivityByIdStudent);
 activityRoutes.put('/evaluate-activity/:id', ActivityController.evaluateActivity);
 activityRoutes.get("/activities-analysis", ActivityController.getAllActivityInAnalysis);
+activityRoutes.get('/one-activity/:id', ActivityController.getOneActivity);
 
 export default activityRoutes;
