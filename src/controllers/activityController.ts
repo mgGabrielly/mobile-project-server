@@ -232,6 +232,46 @@ class ActivityController {
             res.status(500).json({ error: "Ocorreu um erro ao buscar as atividades em análise." });
         }
     }
+
+    async getOneActivity(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { id } = req.params;
+            const activity = await prisma.activity.findUnique({
+                where: { id: Number(id) },
+            });
+
+            if (!activity) {
+                res.status(404).json({ error: "Atividade não encontrado." });
+            } else {
+                let activityUser = [];
+
+                const user = await prisma.user.findUnique({
+                    where: { id: activity.idStudent },
+                });
+
+                const combinedObject = {
+                    activityId: activity.id,
+                    activityName: activity.name,
+                    activityGroup: activity.activityGroup,
+                    activityType: activity.activityType,
+                    activityWorkload: activity.workload,
+                    activityPlace: activity.placeOfCourse,
+                    activitySemester: activity.activityPeriod,
+                    activityCertificate: activity.certificate,
+                    evaluation: activity.evaluation,
+                    userId: user?.id,
+                    userName: user?.name,
+                    userMatriculation: user?.matriculation,
+                };
+
+                activityUser.push(combinedObject);
+
+                res.json({ activityUser });
+            }
+        } catch (error) {
+            res.status(500).json({ error: "Ocorreu um erro ao buscar as informações da atividade." });
+        }
+    }
 }
 
 export default new ActivityController();
