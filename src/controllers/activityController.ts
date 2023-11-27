@@ -6,6 +6,7 @@ import validateActivityInformation from "../components/validateActivityInformati
 import checkTotalWorkload from "../components/checkTotalWorkload";
 import activityCreateNotificationEmail from "../components/activityCreateNotificationEmail";
 import activityUpdateNotificationEmail from "../components/activityUpdateNotificationEmail";
+import path from 'path';
 
 const prisma = new PrismaClient();
 
@@ -271,6 +272,60 @@ class ActivityController {
         } catch (error) {
             res.status(500).json({ error: "Ocorreu um erro ao buscar as informações da atividade." });
         }
+    }
+
+    async certificateActivity(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { id } = req.params;
+            const activity = await prisma.activity.findUnique({
+                where: { id: Number(id) },
+            });
+        
+            if (!activity) {
+                res.status(404).send('Atividade não encontrada');
+                return;
+            }
+        
+            const filePath = activity.certificate;
+            const nomeArquivo = obterNomeArquivo(String(filePath));
+        
+            if (nomeArquivo) {
+                const fullPath = path.join(__dirname, '../../uploads/certificates', nomeArquivo.replace(/\\/g, '/'));
+        
+                // Verificar a existência do arquivo
+                const fs = require('fs');
+                if (!fs.existsSync(fullPath)) {
+                    console.error('Arquivo não encontrado:', fullPath);
+                    res.status(404).send('Arquivo não encontrado');
+                    return;
+                }
+        
+                // Configurar headers do response
+                res.setHeader('Content-Type', 'application/pdf');
+                res.setHeader('Content-Disposition', `attachment; filename`);
+        
+                // Enviar o arquivo
+                res.download(fullPath);
+            } else {
+                // Lógica para lidar com o caso em que caminhoArquivo é undefined
+                res.status(400).send('Caminho do arquivo não encontrado na solicitação.');
+            }
+        } catch (error) {
+            console.error('Erro ao obter o arquivo PDF:', error);
+            res.status(500).send('Erro interno do servidor');
+        }        
+    }
+}
+
+function obterNomeArquivo(filePath: string): string | undefined {
+    const partes = filePath.split('\\'); // Dividir o caminho em partes usando a barra invertida
+    const indexCertificates = partes.indexOf('certificates');
+  
+    if (indexCertificates !== -1 && indexCertificates < partes.length - 1) {
+        return partes.slice(indexCertificates + 1).join(path.sep);
+    } else {
+        console.error('Formato de caminho de arquivo inválido:', filePath);
+        return undefined;
     }
 }
 
