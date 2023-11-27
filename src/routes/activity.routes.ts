@@ -39,5 +39,6 @@ activityRoutes.get('/my-activities/:id', ActivityController.getAllActivityByIdSt
 activityRoutes.put('/evaluate-activity/:id', ActivityController.evaluateActivity);
 activityRoutes.get("/activities-analysis", ActivityController.getAllActivityInAnalysis);
 activityRoutes.get('/one-activity/:id', ActivityController.getOneActivity);
+activityRoutes.get('/certificate-activity/:id', ActivityController.certificateActivity);
 
 export default activityRoutes;
