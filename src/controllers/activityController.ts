@@ -42,52 +42,30 @@ class ActivityController {
                 if (validationResult.success == false) {
                     res.status(validationResult.status).json(validationResult.message);
                     return;
-                } else {
-                    const newWorkload = Number(validationResult.message) || adjustedWorkload;	
-                    console.log(newWorkload); // Para verificar
+                } 
+                
+                const newWorkload = Number(validationResult.message) || adjustedWorkload;	
+		        console.log(newWorkload); // Para verificar
 
-                    const activity = await prisma.activity.create({
-                        data: {
-                            name, 
-                            idStudent: Number(id),
-                            activityGroup,
-                            activityType,
-                            workload: Number(newWorkload),
-                            activityPeriod,
-                            placeOfCourse,
-                            certificate: certificates,
-                            evaluation: "Em análise"
-                        },
-                    });
+                const activity = await prisma.activity.create({
+                    data: {
+                        name, 
+                        idStudent: Number(id),
+                        activityGroup,
+                        activityType,
+                        workload: Number(newWorkload),
+                        activityPeriod,
+                        placeOfCourse,
+                        certificate: certificates,
+                        evaluation: "Em análise"
+                    },
+                });
 
-                    if (activity) {
-                        await activityCreateNotificationEmail(activity)
-                        res.json({message: "Atividade cadastrada com sucesso", activity})
-                        return;
-                    }
+                if (activity) {
+                    await activityCreateNotificationEmail(activity)
+                    res.json({message: "Atividade cadastrada com sucesso", activity})
+                    return;
                 }
-                // const newWorkload = Number(validationResult.message) || adjustedWorkload;	
-		        // console.log(newWorkload); // Para verificar
-
-                // const activity = await prisma.activity.create({
-                //     data: {
-                //         name, 
-                //         idStudent: Number(id),
-                //         activityGroup,
-                //         activityType,
-                //         workload: Number(newWorkload),
-                //         activityPeriod,
-                //         placeOfCourse,
-                //         certificate: certificates,
-                //         evaluation: "Em análise"
-                //     },
-                // });
-
-                // if (activity) {
-                //     await activityCreateNotificationEmail(activity)
-                //     res.json({message: "Atividade cadastrada com sucesso", activity})
-                //     return;
-                // }
             }
         } catch (error) {
             res.status(500).json({ error: "Não foi possível cadastrar a Atividade." });

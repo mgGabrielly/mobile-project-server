@@ -41,14 +41,14 @@ async function checkTotalWorkload(id: any, workload: number ): Promise<{ success
                 return { 
                     //Carga total durante o curso não foi atingida. Atividade pode ser cadastrada. 
                     success: true, 
-                    message: '${adjustedWorkload}.', 
+                    message: `${adjustedWorkload}.`, 
                     status: 200 
                 };
             } else {
                 return { 
                     //Carga total durante o curso não foi atingida. Atividade pode ser cadastrada.
                     success: true, 
-                    message: '${adjustedWorkload}.', 
+                    message: `${adjustedWorkload}.`, 
                     status: 200 
                 };
             }

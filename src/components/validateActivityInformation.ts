@@ -65,14 +65,14 @@ async function validateActivityInformation(id: any, activityGroup: string, activ
                         return { 
                             //Informações da atividade válidas para cadastro. E carga total durante o curso não foi atingida para o tipo de atividade.
                             success: true, 
-                            message: '${newWorkload}.', 
+                            message: `${newWorkload}.`, 
                             status: 200 
                         };
                     } else {
                         return { 
                             //Informações da atividade válidas para cadastro. E carga total durante o curso não foi atingida para o tipo de atividade.
                             success: true, 
-                            message: '${newWorkload}.', 
+                            message: `${newWorkload}.`, 
                             status: 200 
                         };
                     }
@@ -90,14 +90,14 @@ async function validateActivityInformation(id: any, activityGroup: string, activ
                         return { 
                             //Informações da atividade válidas para cadastro. E carga total durante o curso não foi atingida para o tipo de atividade.
                             success: true, 
-                            message: '${newWorkload}.', 
+                            message: `${newWorkload}.`, 
                             status: 200 
                             };
                     } else {
                         return { 
                             //Informações da atividade válidas para cadastro. E carga total durante o curso não foi atingida para o tipo de atividade.
                             success: true, 
-                            message: '${newWorkload}.', 
+                            message: `${newWorkload}.`, 
                             status: 200 
                         };
                     }
