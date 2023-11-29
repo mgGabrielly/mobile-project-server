@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 //// Função para verificar com relação a carga horária total permitida no curso
-async function checkTotalWorkload(id: any ): Promise<{ success: boolean; message: string; status: number }> {
+async function checkTotalWorkload(id: any, workload: number ): Promise<{ success: boolean; message: string; status: number }> {
     // o id é o do estudante
     try { 
         // Extraindo as informações do usuário
@@ -34,12 +34,24 @@ async function checkTotalWorkload(id: any ): Promise<{ success: boolean; message
             }
         }
         
+        let adjustedWorkload = workload;
         if(Number(totalWorkloadActivities) < 120) {
-            return { 
-                success: true, 
-                message: 'Carga total durante o curso não foi atingida. Atividade pode ser cadastrada.', 
-                status: 200 
-            };
+            if (Number(totalWorkloadActivities) + workload > 120) {
+                adjustedWorkload = (120 - Number(totalWorkloadActivities));
+                return { 
+                    //Carga total durante o curso não foi atingida. Atividade pode ser cadastrada. 
+                    success: true, 
+                    message: '${adjustedWorkload}.', 
+                    status: 200 
+                };
+            } else {
+                return { 
+                    //Carga total durante o curso não foi atingida. Atividade pode ser cadastrada.
+                    success: true, 
+                    message: '${adjustedWorkload}.', 
+                    status: 200 
+                };
+            }
         } else {
             return { success: false, message: 'Carga horária do curso já foi atingida.', status: 406 };
         }
