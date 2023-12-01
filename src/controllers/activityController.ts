@@ -40,6 +40,48 @@ class ActivityController {
                 if (validationResult.success == false) {
                     res.status(validationResult.status).json(validationResult.message);
                     return;
+                } 
+
+                ////////////////
+                const activityTypeExist = await prisma.typeOfActivity.findUnique({
+                    where: { 
+                        description: activityType,
+                        activityGroup: activityGroup,
+                    },
+                });
+                if(!activityTypeExist || activityTypeExist.status === "desativado") {
+                    res.status(400).json({ message: "Tipo de atividade inválido." });
+                    return;
+                }
+                const activitiesStudent = await prisma.activity.findMany({
+                    where: { 
+                        idStudent: Number(id),
+                        activityType: activityType,
+                    },
+                });
+        
+                // Somando todas as horas das atividades já cadastradas com a que se quer cadastrar pelo tipo de atividade para comparar com a carga total do curso
+                // E Somando todas as horas das atividades já cadastras com a que se ser cadastrar pelo tipo de atividade e pelo o semestre para comparar com a carga semestral permitida
+                let totalWorkloadOfActivities = 0;
+                let totalWorkloadOfActivitiesForTheSemester = 0;
+                let newWorkload = workload;
+                for(const activityStudent of activitiesStudent) {
+                    totalWorkloadOfActivities += Number(activityStudent.workload);
+        
+                    if(activityStudent.activityPeriod == activityPeriod){
+                        totalWorkloadOfActivitiesForTheSemester += Number(activityStudent.workload);
+                    }
+                }
+
+                if ((activityTypeExist.semesterWorkload - totalWorkloadOfActivitiesForTheSemester) <= workload) {
+                    newWorkload = (activityTypeExist.semesterWorkload - totalWorkloadOfActivitiesForTheSemester);
+                    if ((activityTypeExist.courseWorkload - totalWorkloadOfActivities) <= newWorkload){
+                        newWorkload = (activityTypeExist.courseWorkload - totalWorkloadOfActivities)
+                    } else {
+                        newWorkload;
+                    }
+                } else {
+                    newWorkload;
                 }
                 
                 const activity = await prisma.activity.create({
@@ -301,11 +343,13 @@ class ActivityController {
                 }
         
                 // Configurar headers do response
+                // Configurar headers do response
                 res.setHeader('Content-Type', 'application/pdf');
-                res.setHeader('Content-Disposition', `attachment; filename`);
-        
+                res.setHeader('Content-Disposition', `attachment; filename="${nomeArquivo}"`);
+
                 // Enviar o arquivo
                 res.download(fullPath);
+
             } else {
                 // Lógica para lidar com o caso em que caminhoArquivo é undefined
                 res.status(400).send('Caminho do arquivo não encontrado na solicitação.');

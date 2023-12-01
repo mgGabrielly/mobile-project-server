@@ -32,6 +32,7 @@ async function validateActivityInformation(id: any, activityGroup: string, activ
             where: { 
                 idStudent: studentExist.id,
                 activityType: activityType,
+                evaluation: "Deferida" || "Em análise",
             },
         });
         if(activitiesStudent.length <= 0) {
