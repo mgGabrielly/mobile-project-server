@@ -29,26 +29,31 @@ class ActivityController {
                 }
 
                 // Validar horas totais
-                const calidationCheckTotalWorkload = await checkTotalWorkload(id);
+                const calidationCheckTotalWorkload = await checkTotalWorkload(id, workload);
                 if (calidationCheckTotalWorkload.success == false) {
                     res.status(calidationCheckTotalWorkload.status).json(calidationCheckTotalWorkload.message);
                     return;
                 }
+                const adjustedWorkload = Number(calidationCheckTotalWorkload.message) || workload;
+                console.log(adjustedWorkload); // Para verificar
 
                 //Validar horas por tipo de atividade
-                const validationResult = await validateActivityInformation(id, activityGroup, activityType, workload, activityPeriod);
+                const validationResult = await validateActivityInformation(id, activityGroup, activityType, adjustedWorkload, activityPeriod);
                 if (validationResult.success == false) {
                     res.status(validationResult.status).json(validationResult.message);
                     return;
-                }
+                } 
                 
+                const newWorkload = Number(validationResult.message) || adjustedWorkload;	
+		        console.log(newWorkload); // Para verificar
+
                 const activity = await prisma.activity.create({
                     data: {
                         name, 
                         idStudent: Number(id),
                         activityGroup,
                         activityType,
-                        workload: Number(workload),
+                        workload: Number(newWorkload),
                         activityPeriod,
                         placeOfCourse,
                         certificate: certificates,
@@ -163,15 +168,44 @@ class ActivityController {
             if (!activity) {
                 res.status(404).json({ error: "Atividade não encontrado." });
             } else {
-                const activityUpdate = await prisma.activity.update({
-                    where: { id: Number(id) },
-                    data: {
-                        evaluation
-                    },
-                });
-                // Envio do email para aletar o aluno da atualização da avalização da atividade
-                await emailEvaluationResult(activityUpdate, observation);
-                res.json({activityUpdate})
+                if (evaluation == "Deferida") {
+                    // Validar horas totais
+                    const calidationCheckTotalWorkload = await checkTotalWorkload(activity.idStudent, activity.workload);
+                    if (calidationCheckTotalWorkload.success == false) {
+                        res.status(calidationCheckTotalWorkload.status).json(calidationCheckTotalWorkload.message);
+                        return;
+                    }	
+                    const adjustedWorkload = Number(calidationCheckTotalWorkload.message) || activity.workload;
+    
+                    //Validar horas por tipo de atividade
+                    const validationResult = await validateActivityInformation(activity.idStudent, activity.activityGroup, activity.activityType, adjustedWorkload, activity.activityPeriod);
+                    if (validationResult.success == false) {
+                        res.status(validationResult.status).json(validationResult.message);
+                        return;
+                    } 
+                    const newWorkload = Number(validationResult.message) || adjustedWorkload;	
+    
+                    const activityUpdate = await prisma.activity.update({
+                        where: { id: Number(id) },
+                        data: {
+                            evaluation,
+                            workload: newWorkload,
+                           },
+                    });
+                    // Envio do email para aletar o aluno da atualização da avalização da atividade
+                    await emailEvaluationResult(activityUpdate, observation);
+                    res.json({activityUpdate})
+                } else {
+                    const activityUpdate = await prisma.activity.update({
+                        where: { id: Number(id) },
+                        data: {
+                            evaluation
+                           },
+                    });
+                    // Envio do email para aletar o aluno da atualização da avalização da atividade
+                    await emailEvaluationResult(activityUpdate, observation);
+                    res.json({activityUpdate})
+                }
             }
         } catch (error) {
             res.status(500).json({ error: "Não foi possível avaliar a atividade." });
