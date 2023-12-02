@@ -35,9 +35,9 @@ async function validateActivityInformation(id: any, activityGroup: string, activ
 		        evaluation: "Deferida",
             },
         });
-        if(activitiesStudent.length <= 0) {
-            return { success: true, message: 'Atividade pode ser cadastrada.', status: 200 };
-        }
+        // if(activitiesStudent.length <= 0) {
+        //     return { success: true, message: 'Atividade pode ser cadastrada.', status: 200 };
+        // }
 
         // Somando todas as horas das atividades já cadastradas com a que se quer cadastrar pelo tipo de atividade para comparar com a carga total do curso
         // E Somando todas as horas das atividades já cadastras com a que se ser cadastrar pelo tipo de atividade e pelo o semestre para comparar com a carga semestral permitida
