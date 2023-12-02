@@ -24,7 +24,13 @@ class AuthController {
 
             if (!user) {
                 return res.status(407).json({
-                    error: "Usuário não encontrados!!",
+                    error: "Usuário não encontrado!",
+                });
+            }
+
+            if (user.status == "Desativado") {
+                return res.status(409).json({
+                    error: "Usuário não tem autorização!",
                 });
             }
             

@@ -1,7 +1,7 @@
 # Backend do Projeto de Mobile
 ## Introdução
 Esse repositorio armazena o backend do sistema desenvolvido para obtenção da nota da segunda unidade de Dispositivos Móveis. 
-A aplicação é um sistema que visa promover .
+A aplicação é um sistema que visa promover a eficiência e a acessibilidade no gerenciamento das atividades complementares do Curso de Graduação em Engenharia de Software. Atualmente, o coordenador enfrenta dificuldades significativas na obtenção e análise de documentos dos alunos, o que consome considerável quantidade de tempo devido à necessidade de comunicação via e-mail e busca manual dessas informações.
 
 ## Pré-requisitos
 - Node.js (versão 18.16.0)
