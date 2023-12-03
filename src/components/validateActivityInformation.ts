@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 //// Função para verificar com relação as regras de negócio
-async function validateActivityInformation(id: any, activityGroup: string, activityType: string, workload: number, activityPeriod: string ): Promise<{ success: boolean; message: string; status: number }> {
+async function validateActivityInformation(id: any, activityGroup: string, activityType: string, adjustedWorkload: number, activityPeriod: string ): Promise<{ success: boolean; message: string; status: number }> {
     // o id é o do estudante
     try {    
         // Extraindo as informações do tipo de atividade de acordo com o activityType da atividade a ser cadastrada
@@ -27,16 +27,17 @@ async function validateActivityInformation(id: any, activityGroup: string, activ
             return { success: false, message: 'Estudante não encontrado.', status: 400 };
         }
 
-        // Extraindo todas atividades do usuário que tem o mesmo tipo de atividade a ser cadastrada
+        // Extraindo todas atividades do usuário que tem o mesmo tipo de atividade a ser cadastrada e foram deferidas
         const activitiesStudent = await prisma.activity.findMany({
             where: { 
                 idStudent: studentExist.id,
                 activityType: activityType,
+		        evaluation: "Deferida",
             },
         });
-        if(activitiesStudent.length <= 0) {
-            return { success: true, message: 'Atividade pode ser cadastrada.', status: 200 };
-        }
+        // if(activitiesStudent.length <= 0) {
+        //     return { success: true, message: 'Atividade pode ser cadastrada.', status: 200 };
+        // }
 
         // Somando todas as horas das atividades já cadastradas com a que se quer cadastrar pelo tipo de atividade para comparar com a carga total do curso
         // E Somando todas as horas das atividades já cadastras com a que se ser cadastrar pelo tipo de atividade e pelo o semestre para comparar com a carga semestral permitida
@@ -53,19 +54,60 @@ async function validateActivityInformation(id: any, activityGroup: string, activ
         // Para verificação
         // activityTypeExist.courseWorkload;  Carga horária permitida durante todo o curso
         // activityTypeExist.semesterWorkload;  Carga horária permitida por semestre
+        let newWorkload = Number(adjustedWorkload);
+
         if(totalWorkloadOfActivitiesForTheSemester < activityTypeExist.semesterWorkload) {
-            if(totalWorkloadOfActivities < activityTypeExist.courseWorkload){
-                return { 
-                    success: true, 
-                    message: 'Informações da atividade válidas para cadastro. E carga total durante o curso não foi atingida para o tipo de atividade.', 
-                    status: 200 
-                }; 
+            if(adjustedWorkload > (activityTypeExist.semesterWorkload - totalWorkloadOfActivitiesForTheSemester)) {
+                newWorkload = (activityTypeExist.semesterWorkload - totalWorkloadOfActivitiesForTheSemester);
+                if(totalWorkloadOfActivities < activityTypeExist.courseWorkload){
+                    if(newWorkload > (activityTypeExist.courseWorkload - totalWorkloadOfActivities)) {
+                        newWorkload = (activityTypeExist.courseWorkload - totalWorkloadOfActivities);
+                        return { 
+                            //Informações da atividade válidas para cadastro. E carga total durante o curso não foi atingida para o tipo de atividade.
+                            success: true, 
+                            message: `${newWorkload}.`, 
+                            status: 200 
+                        };
+                    } else {
+                        return { 
+                            //Informações da atividade válidas para cadastro. E carga total durante o curso não foi atingida para o tipo de atividade.
+                            success: true, 
+                            message: `${newWorkload}.`, 
+                            status: 200 
+                        };
+                    }
+                } else {
+                    return { 
+                        success: false, 
+                        message: 'Informações da atividade válidas para cadastro. Mas Carga total durante o curso já foi atingida para o tipo de atividade.', 
+                        status: 403 
+                    };
+                }
             } else {
-                return { 
-                    success: false, 
-                    message: 'Informações da atividade válidas para cadastro. Mas Carga total durante o curso já foi atingida para o tipo de atividade.', 
-                    status: 403 
-                };
+                if(totalWorkloadOfActivities < activityTypeExist.courseWorkload){
+                    if(newWorkload > (activityTypeExist.courseWorkload - totalWorkloadOfActivities)) {
+                        newWorkload = (activityTypeExist.courseWorkload - totalWorkloadOfActivities);
+                        return { 
+                            //Informações da atividade válidas para cadastro. E carga total durante o curso não foi atingida para o tipo de atividade.
+                            success: true, 
+                            message: `${newWorkload}.`, 
+                            status: 200 
+                            };
+                    } else {
+                        return { 
+                            //Informações da atividade válidas para cadastro. E carga total durante o curso não foi atingida para o tipo de atividade.
+                            success: true, 
+                            message: `${newWorkload}.`, 
+                            status: 200 
+                        };
+                    }
+                } else {
+                    return { 
+                        success: false, 
+                        message: 'Informações da atividade válidas para cadastro. Mas Carga total durante o curso já foi atingida para o tipo de atividade.', 
+                        status: 403 
+                    };
+                }
             }
         } else {
             return { success: false, message: 'Informações da atividade válidas. Mas carga horária semestral já foi atingida.', status: 402 };

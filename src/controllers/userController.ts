@@ -115,8 +115,11 @@ class UserController {
       if (!user) {
         res.status(404).json({ error: "Usuário não encontrado." });
       } else {
-        await  prisma.user.delete({
+        await prisma.user.update({
           where: { id: Number(id) },
+          data: {
+            status: "desativado",
+          },
         });
         res.json({ message: "Usuário excluído com sucesso." });
       }
