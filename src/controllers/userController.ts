@@ -118,7 +118,7 @@ class UserController {
         await prisma.user.update({
           where: { id: Number(id) },
           data: {
-            status: "Desativado",
+            status: "desativado",
           },
         });
         res.json({ message: "Usuário excluído com sucesso." });
