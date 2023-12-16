@@ -55,6 +55,7 @@ class UserController {
   async getAllUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const users = await prisma.user.findMany( {
+        where: { status: "ativo" },
         include: { myActivities: true },
       });
       res.json({ users });
