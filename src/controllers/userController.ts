@@ -55,6 +55,7 @@ class UserController {
   async getAllUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const users = await prisma.user.findMany( {
+        where: { status: "ativo" },
         include: { myActivities: true },
       });
       res.json({ users });
@@ -82,13 +83,15 @@ class UserController {
   async updateUser(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
-      const { name, email, matriculation, turma, telephone } = req.body;
+      const { name, email, matriculation, telephone } = req.body;
       const user = await prisma.user.findUnique({
         where: { id: Number(id) },
       });
       if (!user) {
         res.status(404).json({ error: "Usuário não encontrado." });
       } else {
+        // Extraindo a turma pela matricula
+        const turma = extractClass(matriculation);
         const userUpdate = await prisma.user.update({
           where: { email },
           data: {
