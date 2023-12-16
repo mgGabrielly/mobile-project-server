@@ -43,7 +43,7 @@ class AuthController {
             }
             
             // Generating token for each type of user
-            const { id, name, userType } = user;
+            const { id, name, userType, telephone,  } = user;
             if (user.userType === "student") {
                 const token = jwt.sign(
                     {
@@ -51,6 +51,7 @@ class AuthController {
                         email: user.email,
                         name: user.name,
                         userType: user.userType,
+                        telephone: user.telephone,
                     },
                     process.env.SECRET_USER_COMMON,
                     {
@@ -67,6 +68,7 @@ class AuthController {
                         email: user.email,
                         name: user.name,
                         userType: user.userType,
+                        telephone: user.telephone,
                     },
                     process.env.SECRET_USER_ADMIN,
                     {
