@@ -14,7 +14,7 @@ class ActivityController {
     async createActivity(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { id } = req.params;
-            const { name, activityGroup, activityType, workload, activityPeriod, placeOfCourse } = req.body;
+            const { name, activityType, workload, activityPeriod, placeOfCourse } = req.body;
             const file = req.file;
 
             if (!file || file.mimetype !== 'application/pdf') {
@@ -22,11 +22,15 @@ class ActivityController {
             } else {
                 const certificates = file.path;
 
-                const activityExists = await checkActivityExistence(name, activityGroup, activityType, Number(workload), activityPeriod, placeOfCourse);
+                const activityExists = await checkActivityExistence(name, activityType, Number(workload), activityPeriod, placeOfCourse);
                 if (activityExists) {
                     res.status(405).json({ message: "Atividade já existe" });
                     return;
                 }
+
+                // obter o activityGroup pelo activityType
+                const typeAct= await prisma.typeOfActivity.findUnique({ where: { description: activityType } });
+                const activityGroup = String(typeAct?.activityGroup);
 
                 // Validar horas totais
                 const calidationCheckTotalWorkload = await checkTotalWorkload(id, workload);
