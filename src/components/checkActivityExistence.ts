@@ -2,7 +2,8 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-async function checkActivityExistence(name: string, activityType: string, workload: number, activityPeriod: string, placeOfCourse: string): Promise<boolean> {
+async function checkActivityExistence(id: number, name: string, activityType: string, workload: number, activityPeriod: string, placeOfCourse: string): Promise<boolean> {
+    let idStudent = id;
     const activityExist = await prisma.activity.findMany({
         where: {
             name,
@@ -10,6 +11,7 @@ async function checkActivityExistence(name: string, activityType: string, worklo
             workload,
             activityPeriod,
             placeOfCourse,
+            idStudent,
         },
     });
 

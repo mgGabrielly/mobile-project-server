@@ -22,7 +22,7 @@ class ActivityController {
             } else {
                 const certificates = file.path;
 
-                const activityExists = await checkActivityExistence(name, activityType, Number(workload), activityPeriod, placeOfCourse);
+                const activityExists = await checkActivityExistence(Number(id), name, activityType, Number(workload), activityPeriod, placeOfCourse);
                 if (activityExists) {
                     res.status(405).json({ message: "Atividade já existe" });
                     return;
