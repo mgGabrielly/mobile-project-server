@@ -13,12 +13,12 @@ class AddStudentsController {
 
     if (
       !file ||
-      file.mimetype !==
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      !['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/octet-stream'].includes(file.mimetype)
     ) {
       return res.status(401).json({
         message: 'No file uploaded',
       });
+      
     } else {
       try {
         const allStudents = readDataStudents(file.path);
