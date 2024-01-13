@@ -17,7 +17,8 @@ class ActivityController {
             const { name, activityType, workload, activityPeriod, placeOfCourse } = req.body;
             const file = req.file;
 
-            if (!file || file.mimetype !== 'application/pdf') {
+            if (!file ||
+                !['application/pdf', 'application/octet-stream'].includes(file.mimetype)) {
                 res.status(401).json({ message: 'Nenhum arquivo PDF enviado.' });
             } else {
                 const certificates = file.path;
@@ -39,7 +40,7 @@ class ActivityController {
                     return;
                 }
                 const adjustedWorkload = Number(calidationCheckTotalWorkload.message) || workload;
-                console.log(adjustedWorkload); // Para verificar
+                // console.log(adjustedWorkload); // Para verificar
 
                 //Validar horas por tipo de atividade
                 const validationResult = await validateActivityInformation(id, activityGroup, activityType, adjustedWorkload, activityPeriod);
@@ -49,7 +50,7 @@ class ActivityController {
                 } 
                 
                 const newWorkload = Number(validationResult.message) || adjustedWorkload;	
-		        console.log(newWorkload); // Para verificar
+		        // console.log(newWorkload); // Para verificar
 
                 const activity = await prisma.activity.create({
                     data: {
@@ -70,6 +71,7 @@ class ActivityController {
                     res.json({message: "Atividade cadastrada com sucesso", activity})
                     return;
                 }
+
             }
         } catch (error) {
             res.status(500).json({ error: "Não foi possível cadastrar a Atividade." });
