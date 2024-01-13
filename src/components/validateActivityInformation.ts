@@ -13,8 +13,9 @@ async function validateActivityInformation(id: any, activityGroup: string, activ
                 activityGroup: activityGroup,
             },
         });
+        
         if(!activityTypeExist || activityTypeExist.status === "desativado") {
-            return { success: false, message: 'Tipo de atividade inválido.', status: 400 };
+            return { success: false, message: 'Tipo de atividade inválido.', status: 415 };
         }
 
         // Extraindo as informações do usuário
@@ -24,7 +25,7 @@ async function validateActivityInformation(id: any, activityGroup: string, activ
             },
         });
         if(!studentExist || studentExist.status === "desativado") {
-            return { success: false, message: 'Estudante não encontrado.', status: 400 };
+            return { success: false, message: 'Estudante não encontrado.', status: 411 };
         }
 
         // Extraindo todas atividades do usuário que tem o mesmo tipo de atividade a ser cadastrada e foram deferidas
