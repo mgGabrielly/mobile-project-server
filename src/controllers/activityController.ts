@@ -122,7 +122,7 @@ class ActivityController {
     async updateActivity(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { id } = req.params;
-            const { name, activityGroup, activityType, workload, activityPeriod, placeOfCourse } = req.body;
+            const { name, activityType, workload, activityPeriod, placeOfCourse } = req.body;
             const file = req.file;
 
             if (!file || file.mimetype !== 'application/pdf') {
@@ -138,11 +138,15 @@ class ActivityController {
                     if (activity.evaluation == "Deferida") {
                         res.status(405).json({ error: "Não é possível atualizar a atividade deferida." });
                     } else {
+                        // obter o activityGroup pelo activityType
+                        const typeAct= await prisma.typeOfActivity.findUnique({ where: { description: activityType } });
+                        const activityGroup = String(typeAct?.activityGroup);
+
                         const activityUpdate = await prisma.activity.update({
                             where: { id: Number(id) },
                             data: {
                                 name, 
-                                activityGroup, 
+                                activityGroup: activityGroup, 
                                 activityType, 
                                 workload: Number(workload),
                                 activityPeriod,
