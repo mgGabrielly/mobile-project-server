@@ -125,7 +125,8 @@ class ActivityController {
             const { name, activityType, workload, activityPeriod, placeOfCourse } = req.body;
             const file = req.file;
 
-            if (!file || file.mimetype !== 'application/pdf') {
+            if (!file ||
+                !['application/pdf', 'application/octet-stream'].includes(file.mimetype)) {
                 res.status(401).json({ message: 'Nenhum arquivo PDF enviado.' });
             } else {
                 const certificates = file.path;
