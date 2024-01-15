@@ -123,44 +123,77 @@ class ActivityController {
         try {
             const { id } = req.params;
             const { name, activityType, workload, activityPeriod, placeOfCourse } = req.body;
-            const file = req.file;
+            // const file = req.file;
 
-            if (!file ||
-                !['application/pdf', 'application/octet-stream'].includes(file.mimetype)) {
-                res.status(401).json({ message: 'Nenhum arquivo PDF enviado.' });
+            // if (!file ||
+            //     !['application/pdf', 'application/octet-stream'].includes(file.mimetype)) {
+            //     res.status(401).json({ message: 'Nenhum arquivo PDF enviado.' });
+            // } else {
+            //     const certificates = file.path;
+            //     const activity = await prisma.activity.findUnique({
+            //         where: { id: Number(id) },
+            //     });
+            //     if (!activity) {
+            //         res.status(404).json({ error: "Atividade não encontrado." });
+            //     } else {
+            //         if (activity.evaluation == "Deferida") {
+            //             res.status(405).json({ error: "Não é possível atualizar a atividade deferida." });
+            //         } else {
+            //             // obter o activityGroup pelo activityType
+            //             const typeAct= await prisma.typeOfActivity.findUnique({ where: { description: activityType } });
+            //             const activityGroup = String(typeAct?.activityGroup);
+
+            //             const activityUpdate = await prisma.activity.update({
+            //                 where: { id: Number(id) },
+            //                 data: {
+            //                     name, 
+            //                     activityGroup: activityGroup, 
+            //                     activityType, 
+            //                     workload: Number(workload),
+            //                     activityPeriod,
+            //                     placeOfCourse,
+            //                     certificate: certificates,
+            //                     evaluation: "Em análise"
+            //                 },
+            //             });
+            //             if (activityUpdate) {
+            //                 await activityUpdateNotificationEmail(activityUpdate)
+            //                 res.json({message: "Atividade atualizada com sucesso", activityUpdate})
+            //                 return;
+            //             }
+            //         }
+            //     }
+            // }
+
+            const activity = await prisma.activity.findUnique({
+                where: { id: Number(id) },
+            });
+            if (!activity) {
+                res.status(404).json({ error: "Atividade não encontrado." });
             } else {
-                const certificates = file.path;
-                const activity = await prisma.activity.findUnique({
-                    where: { id: Number(id) },
-                });
-                if (!activity) {
-                    res.status(404).json({ error: "Atividade não encontrado." });
+                if (activity.evaluation == "Deferida") {
+                    res.status(405).json({ error: "Não é possível atualizar a atividade deferida." });
                 } else {
-                    if (activity.evaluation == "Deferida") {
-                        res.status(405).json({ error: "Não é possível atualizar a atividade deferida." });
-                    } else {
-                        // obter o activityGroup pelo activityType
-                        const typeAct= await prisma.typeOfActivity.findUnique({ where: { description: activityType } });
-                        const activityGroup = String(typeAct?.activityGroup);
+                    // obter o activityGroup pelo activityType
+                    const typeAct= await prisma.typeOfActivity.findUnique({ where: { description: activityType } });
+                    const activityGroup = String(typeAct?.activityGroup);
 
-                        const activityUpdate = await prisma.activity.update({
-                            where: { id: Number(id) },
-                            data: {
-                                name, 
-                                activityGroup: activityGroup, 
-                                activityType, 
-                                workload: Number(workload),
-                                activityPeriod,
-                                placeOfCourse,
-                                certificate: certificates,
-                                evaluation: "Em análise"
-                            },
-                        });
-                        if (activityUpdate) {
-                            await activityUpdateNotificationEmail(activityUpdate)
-                            res.json({message: "Atividade atualizada com sucesso", activityUpdate})
-                            return;
-                        }
+                    const activityUpdate = await prisma.activity.update({
+                        where: { id: Number(id) },
+                        data: {
+                            name, 
+                            activityGroup: activityGroup, 
+                            activityType, 
+                            workload: Number(workload),
+                            activityPeriod,
+                            placeOfCourse,
+                            evaluation: "Em análise"
+                        },
+                    });
+                    if (activityUpdate) {
+                        await activityUpdateNotificationEmail(activityUpdate)
+                        res.json({message: "Atividade atualizada com sucesso", activityUpdate})
+                        return;
                     }
                 }
             }
