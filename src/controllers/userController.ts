@@ -19,10 +19,12 @@ class UserController {
         res.status(405).json({
           message: "Usuário já existe",
         });
+        return
       }
 
       if (email != emailConfirm) {
-        res.status(405).json({ error: "Emails não coincidem!" });
+        res.status(406).json({ error: "Emails não coincidem!" });
+        return
       }
 
       // Extraindo a turma pela matricula
