@@ -1,39 +1,39 @@
-name: Deploy to Google Cloud Run
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches:
-      - main
-
+      - main  
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2  
 
-    - name: Set up Google Cloud SDK
-      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-      with:
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
-        export_default_credentials: true
+      - name: Setup Node.js
+        uses: actions/setup-node@v2 
+        with:
+          node-version: '18'  
 
-    - name: Configure Docker
-      uses: actions/setup-node@v3
-      with:
-        node-version: 14
-    - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - name: Install Dependencies
+        run: npm install  
 
-    - name: Build and push Docker image
-      run: |
-        docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/your-docker-image-name .
-        docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/your-docker-image-name
+      - name: Build Project
+        run: npm run build  
 
-    - name: Deploy to Google Cloud Run
-      run: |
-        gcloud run deploy your-service-name \
-          --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/your-docker-image-name \
-          --platform managed \
-          --allow-unauthenticated
+      # Etapa para construir a imagem Docker
+      - name: Build Docker Image
+        run: docker build -t mariagabrielly/backmobile:latest .
+
+      # Etapa para fazer o login no Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Etapa para fazer o push da imagem para o Docker Hub
+      - name: Push Docker Image
+        run: docker push mariagabrielly/backmobile:latest
