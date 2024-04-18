@@ -29,7 +29,10 @@ jobs:
 
       - name: Ensure Prisma Permissions
         run: chmod +x prisma
-        
+
+      - name: Build Project
+        run: /bin/bash -c 'npx prisma generate && tsc'
+
       - name: Build Project
         run: npm install && npm run build  
 
