@@ -7,9 +7,7 @@
     "generate": "npx dotenv -e .env.local npx prisma generate",
     "dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --exec \"ts-node ./src/server.ts\"",
     "test": "npx prisma generate && jest",
-    "generate-prisma": "npx prisma generate",
-    "compile-typescript": "tsc",
-    "build": "npm run generate-prisma && npm run compile-typescript",
+    "build": "npx prisma generate && tsc",
     "start": "ts-node ./src/server.ts"
   },
   "keywords": [],
