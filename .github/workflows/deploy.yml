@@ -30,6 +30,10 @@ jobs:
       - name: Build Project
         run: npm install && npm run build  
 
+      # Etapa para executar testes
+      - name: Run Tests
+        run: npm test
+
       # Etapa para construir a imagem Docker
       - name: Build Docker Image
         run: docker build -t mariagabrielly/backmobile:latest .
