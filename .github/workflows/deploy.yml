@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2 
         with:
-          node-version: '14'  # Alterado para uma versão compatível com AWS ECS
+          node-version: '18'  
 
       - name: Install AWS CLI
         run: |
