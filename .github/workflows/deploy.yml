@@ -1,9 +1,10 @@
-name: Deploy to GitHub Pages
+name: Deploy to AWS ECS
 
 on:
   push:
     branches:
-      - main  
+      - main
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -15,25 +16,32 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2 
         with:
-          node-version: '18'  
+          node-version: '14'  # Alterado para uma versão compatível com AWS ECS
 
-      - name: Install Dependencies
-        run: npm install  
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          sudo pip3 install awscli
+
+      - name: Configure AWS Credentials
+        run: aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} && aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} && aws configure set region ${{ secrets.AWS_REGION }}
 
       - name: Build Project
-        run: npm run build  
+        run: npm install && npm run build  
 
       # Etapa para construir a imagem Docker
       - name: Build Docker Image
         run: docker build -t mariagabrielly/backmobile:latest .
 
-      # Etapa para fazer o login no Docker Hub
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+      # Etapa para fazer o login no Amazon ECR (Elastic Container Registry)
+      - name: Login to Amazon ECR
+        run: aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
-      # Etapa para fazer o push da imagem para o Docker Hub
+      # Etapa para fazer o push da imagem para o Amazon ECR
       - name: Push Docker Image
-        run: docker push mariagabrielly/backmobile:latest
+        run: docker tag mariagabrielly/backmobile:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/backmobile:latest && docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/backmobile:latest
+
+      # Etapa para atualizar o serviço ECS
+      - name: Update ECS Service
+        run: aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} --service ${{ secrets.ECS_SERVICE_NAME }} --force-new-deployment
