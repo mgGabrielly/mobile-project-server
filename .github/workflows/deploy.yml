@@ -30,10 +30,7 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-     
-
-      - name: Compile TypeScript
-        run: npm run compile-typescript
+    
 
       - name: Build Project
         run: npm install && npm run build  
