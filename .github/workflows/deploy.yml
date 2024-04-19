@@ -30,7 +30,11 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Generate Prisma 1
+      # Adicionando permissões de execução para o Prisma
+      - name: Grant Execute Permissions to Prisma
+        run: chmod +x ./node_modules/.bin/prisma
+
+      - name: Generate Prisma
         run: ./node_modules/.bin/prisma migrate dev
 
       - name: Compile TypeScript
