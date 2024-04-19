@@ -31,7 +31,7 @@ jobs:
         run: npm install
 
       - name: Generate Prisma
-        run: npx prisma generate
+        run: npx prisma migrate dev && npx prisma generate
 
       - name: Compile TypeScript
         run: npm run compile-typescript
