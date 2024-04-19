@@ -30,8 +30,11 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Generate Prisma
-        run: npx prisma migrate dev && npx prisma generate
+      - name: Generate Prisma 1
+        run: npx prisma migrate dev
+
+      - name: Generate Prisma 2
+        run: npx prisma generate
 
       - name: Compile TypeScript
         run: npm run compile-typescript
