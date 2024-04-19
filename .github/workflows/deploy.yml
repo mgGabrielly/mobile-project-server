@@ -34,7 +34,11 @@ jobs:
       - name: Grant Execute Permissions to Prisma
         run: chmod +x ./node_modules/.bin/prisma
 
-      
+      - name: Generate Prisma
+        run: ./node_modules/.bin/prisma migrate dev
+
+      - name: Compile TypeScript
+        run: npm run compile-typescript
 
       - name: Build Project
         run: npm install && npm run build  
